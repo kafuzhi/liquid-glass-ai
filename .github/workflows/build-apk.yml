@@ -19,29 +19,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Install Android SDK components
-      run: |
-        sdkmanager --update
-        sdkmanager "platforms;android-34" "build-tools;34.0.0"
-        yes | sdkmanager --licenses
+    - name: Accept SDK licenses
+      run: yes | sdkmanager --licenses || true
 
-    - name: Debug - Show SDK info
-      run: |
-        echo "ANDROID_HOME=$ANDROID_HOME"
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-        ls -la $ANDROID_HOME/platforms/ 2>/dev/null || echo "No platforms"
-        ls -la $ANDROID_HOME/build-tools/ 2>/dev/null || echo "No build-tools"
-        java -version
-        ./gradlew --version
+    - name: Install SDK platforms
+      run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon --stacktrace
+      uses: gradle/actions/gradle-build-action@v4
+      with:
+        arguments: assembleDebug --no-daemon --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
