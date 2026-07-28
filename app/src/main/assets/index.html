@@ -611,7 +611,7 @@
 
   function handleFiles(files) {
     for (const f of files) {
-      if (f.size > 20 * 1024 * 1024) { showToast(`"${f.name}" 超过20MB限制`); continue; }
+      if (f.size > 100 * 1024 * 1024) { showToast(`"${f.name}" 超过100MB限制`); continue; }
       const reader = new FileReader();
       reader.onload = () => {
         attachments.push({ name: f.name, type: f.type, dataUrl: reader.result, size: f.size });
